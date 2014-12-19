@@ -12,4 +12,9 @@ libraryDependencies ++= Seq(
 mainClass := Some("smulc.Main")
 
 mainClass in assembly := Some("smulc.Main")
-assemblyJarName in assembly := "smulc.jar"
+
+assemblyOption in assembly := (assemblyOption in assembly).value.copy(prependShellScript =
+  Some(defaultShellScript))
+
+assemblyJarName in assembly := s"${name.value}-${version.value}"
+
