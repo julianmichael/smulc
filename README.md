@@ -33,6 +33,9 @@ the example in
 [```examples/demo.smulc```](https://github.com/julianmichael/smulc/blob/master/examples/demo.smulc
 "demo.smulc").)
 
+"Helpful" abbreviations include natural numbers, ```+```, ```*```, ```true```, and ```false```.
+They stand for the standard Church encodings.
+
 To run the interpreter, called ```smulc```, just execute ```smulc``` for a REPL (which remembers
 your let-bindings during your session), or execute ```smulc file1.smulc file2.smulc ...``` to
 execute the contents of ```file1.smulc``` and ```file2.smulc```, etc.
