@@ -6,6 +6,7 @@ import CFGParserHelpers._
 
 
 object ExpParsing {
+  import Exp._
   object VarCategory extends RegexLexicalCategory("[a-zA-Z][a-zA-Z0-9]*")
 
   val AbbrevCategory = SetCategory(BasicExps.abbreviations.keySet)

@@ -1,5 +1,6 @@
 package smulc
 
+import Exp._
 import ExpParsing._
 import molt.syntax.cfg._
 import molt.syntax.cfg.parsable._
@@ -52,21 +53,24 @@ case class Program(statements: List[Statement]) {
     val newValue = Exp.smallStepEval(newTerm)
     newValue
   }
+  def addStatement(stmt: Statement, print: Boolean = true): Program = stmt match {
+    case Let(name, term) => {
+      val value = evalExp(term)
+      if(print) println(s"$name = $value")
+      Program(Let(name, value) :: statements)
+    }
+    case Anon(term) => {
+      val value = evalExp(term)
+      if(print) println(s"$value")
+      Program(Anon(value) :: statements)
+    }
+  }
 
   def run(print: Boolean = true): Program = {
     val init = Program(List.empty[Statement])
-    statements.foldLeft(init)((prog, stmt) => stmt match {
-      case Let(name, term) => {
-        val value = prog.evalExp(term)
-        println(s"$name = $value")
-        Program(Let(name, value) :: prog.statements)
-      }
-      case Anon(term) => {
-        val value = prog.evalExp(term)
-        println(s"$value")
-        Program(Anon(value) :: prog.statements)
-      }
-    })
+    statements.foldLeft(init)((prog, stmt) =>
+      prog.addStatement(stmt, print)
+    )
   }
 }
 object Program {
@@ -74,6 +78,18 @@ object Program {
     import Statement._
     val lines = io.Source.fromFile(path).getLines.toList
     val prog = Program(lines.map(parseForced[Statement]))
+    prog
+  }
+  def repl: Program = {
+    import Statement._
+    var prog = Program(Nil)
+    for (line <- io.Source.stdin.getLines) {
+      val next = parseUnique[Statement](line)
+      next match {
+        case None => println("Syntax error. Try again.")
+        case Some(s) => prog = prog.addStatement(s)
+      }
+    }
     prog
   }
 }

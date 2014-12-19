@@ -1,0 +1,3 @@
+let act be \x. x -> x
+let mock be \n. n act act
+1 1

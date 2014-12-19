@@ -1,6 +1,7 @@
 package smulc
 
 sealed trait Exp {
+  import Exp._
   override def toString: String = this match {
     case Var(x) => x
     case Lam(p, t) => s"(\\$p. $t)"
@@ -8,12 +9,12 @@ sealed trait Exp {
     case Act(t1, t2) => s"($t1 -> $t2)"
   }
 }
-case class Var(name: String) extends Exp
-case class Lam(param: String, t: Exp) extends Exp
-case class App(t1: Exp, t2: Exp) extends Exp
-case class Act(t1: Exp, t2: Exp) extends Exp
-
 object Exp {
+  case class Var(name: String) extends Exp
+  case class Lam(param: String, t: Exp) extends Exp
+  case class App(t1: Exp, t2: Exp) extends Exp
+  case class Act(t1: Exp, t2: Exp) extends Exp
+
   import BasicExps._
 
   def isValue(t: Exp) = t match {
@@ -134,4 +135,20 @@ object Exp {
       }
     }
   }
+
+  def superEval(t: Exp): Exp = t match {
+    case v@Var(_) => v
+    case l@Lam(p, t1) => Lam(p, superEval(t1))
+    case App(t1, t2) => {
+      val v1 = superEval(t1)
+      val v2 = superEval(t2)
+      (v1: @unchecked) match {
+        case Lam(p, tt) => superEval(substitute(tt, p, v2))
+        case Act(tt1, tt2) => Act(superEval(tt1), superEval(App(tt2, v2)))
+        case _ => App(v1, v2)
+      }
+    }
+    case Act(t1, t2) => Act(superEval(t1), superEval(t2))
+  }
+
 }
