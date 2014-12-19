@@ -16,7 +16,7 @@ twice in the function ```λx. x x```. So to allow code to be "self-modifying" is
 Thus my new syntactic construct was born: ```f -> x``` may be read "```f``` acting on ```x```".
 An example reduction is as follows:
 
-      (λx . x x x) (f -> y) ===> y (f y) (f (f y))
+      (λx . x x x) (f -> y) ⤳ y (f y) (f (f y))
 
 The "action" ```f``` specifies how ```y``` changes with each use.
 
