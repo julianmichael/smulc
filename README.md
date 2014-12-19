@@ -28,10 +28,17 @@ Usage
 
 For ease of writing programs, the backslash ```\``` is used instead of λ, and a program consists of
 a series of either bare lambdas or let-be expressions, each on its own line. A let-be expression
-binds a term to a name, which can be used later in the program. But be wary...it might change! (see
-the example in
+binds a term to a name, which can be used later in the program. But be wary...it might change! (See
+the following example (found in
 [```examples/demo.smulc```](https://github.com/julianmichael/smulc/blob/master/examples/demo.smulc
-"demo.smulc").)
+"demo.smulc")):
+
+      let trip be \x. x x x
+      let act be f -> y
+      let trick be (\x. x x x)(f -> y)
+      let tricked be trip act
+
+Try running the file and seeing what happens.
 
 "Helpful" abbreviations include natural numbers, ```+```, ```*```, ```true```, and ```false```.
 They stand for the standard Church encodings.
