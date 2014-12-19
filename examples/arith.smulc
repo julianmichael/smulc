@@ -1,0 +1,3 @@
+let plus be \n. \m. \f. \x. m f (n f x)
+let times be \n. \m. \f. m (plus n) 0
+times 2 3

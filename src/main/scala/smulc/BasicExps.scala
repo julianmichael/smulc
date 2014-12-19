@@ -1,12 +1,10 @@
 package smulc
 
 object BasicExps {
-  import molt.syntax.cfg.parsable.ParseCommands._
-  import ExpParsers._
-  val id = parseForced[Exp]("(\\x. x)")
-  val mock = parseForced[Exp]("(\\x. (x x))")
-  val tru = parseForced[Exp]("(\\x. \\y. x)")
-  val fals = parseForced[Exp]("(\\x. \\y. y)")
+  val id = Lam("x", Var("x"))
+  val mock = Lam("x", App(Var("x"), Var("x")))
+  val tru = Lam("x", Lam("y", Var("x")))
+  val fals = Lam("x", Lam("y", Var("y")))
   def nat(i: Int) = {
     var count = i
     var inside: Exp = Var("y")
@@ -16,5 +14,11 @@ object BasicExps {
     }
     Lam("x", Lam("y", inside))
   }
+
+  val abbreviations: Map[String, Exp] = Map(
+    "true" -> tru,
+    "false" -> fals,
+    "id" -> id
+  )
 }
 

@@ -1,6 +1,13 @@
 package smulc
 
-sealed trait Exp
+sealed trait Exp {
+  override def toString: String = this match {
+    case Var(x) => x
+    case Lam(p, t) => s"(\\$p. $t)"
+    case App(t1, t2) => s"($t1 $t2)"
+    case Act(t1, t2) => s"($t1 -> $t2)"
+  }
+}
 case class Var(name: String) extends Exp
 case class Lam(param: String, t: Exp) extends Exp
 case class App(t1: Exp, t2: Exp) extends Exp
@@ -9,16 +16,23 @@ case class Act(t1: Exp, t2: Exp) extends Exp
 object Exp {
   import BasicExps._
 
-  def pretty(t: Exp): String = t match {
-    case Var(x) => x
-    case Lam(p, t) => s"(\\$p. ${pretty(t)})"
-    case App(t1, t2) => s"(${pretty(t1)} ${pretty(t2)})"
-    case Act(t1, t2) => s"(${pretty(t1)} -> ${pretty(t2)})"
-  }
-
   def isValue(t: Exp) = t match {
     case App(_, _) => false
     case _ => true
+  }
+
+  def girth(t: Exp): Int = t match {
+    case Var(_) => 1
+    case Lam(_, t1) => 1 + girth(t1)
+    case App(t1, t2) => 1 + girth(t1) + girth(t2)
+    case Act(t1, t2) => 1 + girth(t1) + girth(t2)
+  }
+
+  def size(t: Exp): Int = t match {
+    case Var(_) => 1
+    case Lam(_, t1) => 1 + size(t1)
+    case App(t1, t2) => 1 + math.max(girth(t1), girth(t2))
+    case Act(t1, t2) => 1 + math.max(girth(t1), girth(t2))
   }
 
   def intsFrom(i: Int): Stream[Int] = i #:: intsFrom(i+1)
