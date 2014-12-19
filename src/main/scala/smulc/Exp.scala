@@ -1,3 +1,5 @@
+package smulc
+
 sealed trait Exp
 case class Var(name: String) extends Exp
 case class Lam(param: String, t: Exp) extends Exp
@@ -5,6 +7,8 @@ case class App(t1: Exp, t2: Exp) extends Exp
 case class Act(t1: Exp, t2: Exp) extends Exp
 
 object Exp {
+  import BasicExps._
+
   def pretty(t: Exp): String = t match {
     case Var(x) => x
     case Lam(p, t) => s"(\\$p. ${pretty(t)})"
@@ -16,8 +20,6 @@ object Exp {
     case App(_, _) => false
     case _ => true
   }
-
-  val id = Lam("x", Var("x"))
 
   def intsFrom(i: Int): Stream[Int] = i #:: intsFrom(i+1)
   val nats = intsFrom(0).map(_.toString)
@@ -51,7 +53,7 @@ object Exp {
     case v@Var(_) => state(v)
     case l@Lam(_, _) => for {
       curSub <- get[Exp]
-      Lam(newP, newT) = alpha(freeVars(actor) ++ freeVars(curSub), l)
+      Lam(newP, newT) = alpha(freeVars(actor) ++ freeVars(curSub) ++ freeVars(l), l)
       subbedTerm <- actionSubstituter(newT, x, actor)
     } yield Lam(newP, subbedTerm)
     case App(tt1, tt2) => for {
@@ -67,7 +69,7 @@ object Exp {
     case Var(y) if y == x => t2
     case v@Var(_) => v
     case l@Lam(_, _) => {
-      val Lam(newP, newT) = alpha(freeVars(t2), l)
+      val Lam(newP, newT) = alpha(freeVars(t2) ++ freeVars(l), l)
       val subbedTerm = primitiveSubstitute(newT, x, t2)
       Lam(newP, subbedTerm)
     }
