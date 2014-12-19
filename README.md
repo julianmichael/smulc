@@ -50,18 +50,19 @@ fix it yourself and submit a pull request.
 
 Syntax:
 
-      var ::= [a-zA-Z][a-zA-Z0-9]*
-      term ::= var
-          | \ var . term
-          | term term
-          | term -> term
+      var   ::= [a-zA-Z][a-zA-Z0-9]*
+      term  ::= var
+              | \ var . term
+              | term term
+              | term -> term
       value ::= var
               | \ var . term
               | var term
               | value -> value
 
 Substitution is defined as normal (with α-substitution and all) and additionally the "action"
-effects I mentioned above. I'm too lazy to think of the best way to write it formally.
+effects I mentioned above. I'm too lazy to think of the best way to write it formally. (...So much
+for "formalities"...)
 
 Semantics (big-step):
 
