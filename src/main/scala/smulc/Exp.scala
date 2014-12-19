@@ -17,8 +17,10 @@ object Exp {
 
   import BasicExps._
 
-  def isValue(t: Exp) = t match {
+  def isValue(t: Exp): Boolean = t match {
+    case App(Var(_), _) => true
     case App(_, _) => false
+    case Act(_, x) => isValue(x)
     case _ => true
   }
 
@@ -109,7 +111,8 @@ object Exp {
     case App(t1, t2) if !isValue(t1) => App(step(t1), t2)
     case App(v1, t2) if !isValue(t2) => App(v1, step(t2))
     case App(Lam(p, t), v2) => substitute(t, p, v2)
-    case App(Act(tt1, tt2), v2) => Act(tt1, App(tt2, v2))
+    case Act(f, x) if !isValue(x) => Act(f, step(x))
+    case App(Act(tt1, vv2), v2) => Act(tt1, App(vv2, v2))
     // otherwise we're stuck (free variable) or looping
   }
 
@@ -130,10 +133,11 @@ object Exp {
       val v2 = bigStepEval(t2)
       (v1: @unchecked) match {
         case Lam(p, t) => bigStepEval(substitute(t, p, v2))
-        case Act(tt1, tt2) => Act(tt1, bigStepEval(App(tt2, v2)))
+        case Act(tt1, tt2) => Act(tt1, bigStepEval(App(bigStepEval(tt2), v2)))
         // otherwise we're stuck (free variable) or looping
       }
     }
+    case Act(f, t1) => Act(f, bigStepEval(t1))
   }
 
   def superEval(t: Exp): Exp = t match {

@@ -76,9 +76,12 @@ case class Program(statements: List[Statement]) {
 object Program {
   def readFromFile(path: String): Program = {
     import Statement._
-    val lines = io.Source.fromFile(path).getLines.toList
-    val prog = Program(lines.map(parseForced[Statement]))
-    prog
+    val lines = io.Source.fromFile(path).getLines.filterNot(_.trim.isEmpty).map(parseUnique[Statement])
+    val stmts = lines.foldRight(List.empty[Statement]) {
+      case (Some(s), l) => s :: l
+      case (None, l) => throw new RuntimeException(s"syntax error near line ${l.length}")
+    }
+    Program(stmts)
   }
   def repl: Program = {
     import Statement._

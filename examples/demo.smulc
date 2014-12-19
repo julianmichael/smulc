@@ -1,0 +1,4 @@
+let trip be \x. x x x
+let act be f -> y
+let trick be (\x. x x x)(f -> y)
+let tricked be trip act
