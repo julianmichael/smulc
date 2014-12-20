@@ -86,9 +86,9 @@ Semantics (big-step):
       -------------------
       t1 -> t2 ⇓ v1 -> v2
 
-      t1 ⇓ v1 -> v2   t2 ⇓ v3
-      -----------------------
-       t1 t2 ⇓ v1 -> (v2 v3)
+      t1 ⇓ v1 -> v2   t2 ⇓ v3   v2 v3 ⇓ v4
+      ------------------------------------
+                t1 t2 ⇓ v1 -> v4
 
 (Here any ```t``` is a term and any ```v``` is a value.)
 
